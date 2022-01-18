@@ -23,18 +23,14 @@ oc edit deployment/postfix
 oc edit deployment/<Deployment_Name>        OR     $ oc edit dc/<DeploymentConfig_Name>
 
 
-````````````````
 securityContext: {}
 serviceAccountName: <ServiceAccount_Name>        <------ Add ServiceAccount Name after securityContext in Deployment/DeploymentConfig and save it.
-````````````````
 
 Example:
 
-````````````````
 securityContext: {}
 serviceAccountName: postfix                <-------
 terminationMessagePath: /dev/termination-log
 terminationMessagePolicy: FallbackToLogsOnError
-````````````````
 
 ```

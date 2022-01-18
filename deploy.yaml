@@ -29,9 +29,9 @@ spec:
         - name: TX_SMTP_RELAY_NETWORKS
           value: "0.0.0.0/0"
         - name: TX_SMTP_RELAY_HOST
-          value: "[nlb-imap-smtp.tw.intra]:25"
+          value: "[xxxxxxxxxxx]:25"
         - name: TX_SMTP_RELAY_MYHOSTNAME
-          value: "relay-nlb-imap-smtp.tw.intra"
+          value: "xxxxxxx"
         image: crcasis/docker-postfix-relay:3
         imagePullPolicy: "Always"
         name: postfix

@@ -1,0 +1,111 @@
+
+#apiVersion: v1
+#kind: Namespace
+#metadata:
+#  name: postfix
+#---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: postfix
+  labels:
+    name: postfix
+  name: postfix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: postfix
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: postfix
+    spec:
+      containers:
+      - env:
+        - name: TX_SMTP_RELAY_NETWORKS
+          value: "0.0.0.0/0"
+        - name: TX_SMTP_RELAY_HOST
+          value: "[nlb-imap-smtp.tw.intra]:25"
+        - name: TX_SMTP_RELAY_MYHOSTNAME
+          value: "relay-nlb-imap-smtp.tw.intra"
+        image: crcasis/docker-postfix-relay:3
+        imagePullPolicy: "Always"
+        name: postfix
+        ports:
+        - containerPort: 25
+        resources: {}
+        serviceAccountName: postfix
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: postfix
+  labels:
+    name: postfix
+  name: postfix
+spec:
+  ports:
+  - name: "25"
+    port: 25
+    targetPort: 25
+  selector:
+    name: postfix
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  namespace: postfix
+  name: postfix
+rules:
+  - resources:
+    - daemonsets
+    - pods
+    apiGroups:
+    - extensions
+    verbs:
+    - create
+    - get
+    - list
+    - watch
+    - delete
+    - update
+---
+apiVersion: v1
+kind: Role
+metadata:
+  namespace: postfix
+  name: postfix
+rules:
+- resources:
+  - "pod"
+  verbs:
+  - "create"
+  - "delete"
+  - "deletecollection"
+  - "get"
+  - "list"
+  - "watch"
+---
+#apiVersion: v1
+#kind: ServiceAccount
+#metadata:
+#  name: postfix
+#  namespace: postfix
+#---
+#apiVersion: rbac.authorization.k8s.io/v1
+#kind: RoleBinding
+#metadata:
+#  name: postfix
+#  namespace: postfix
+#roleRef:
+#  apiGroup: rbac.authorization.k8s.io
+#  kind: ClusterRole
+#  name: postfix
+#subjects:
+#- kind: ServiceAccount
+#  name: postfix
+#  namespace: postfix

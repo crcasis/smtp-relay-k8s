@@ -34,3 +34,6 @@ terminationMessagePath: /dev/termination-log
 terminationMessagePolicy: FallbackToLogsOnError
 
 ```
+
+
+To connect a smtp server with this smtp relay: servicename.namespace:port --> postfix.postfix:25
